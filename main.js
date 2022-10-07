@@ -3,8 +3,10 @@ const desktopMenu = document.querySelector('.desktop-menu')
 const burguerIcon = document.querySelector('.menu')
 const mobileMenu = document.querySelector('.mobile-menu')
 const cartIcon = document.querySelector('.navbar-shopping-cart')
+const productDetailClose = document.querySelector('.product-detail-close')
 const shopingCartDrop = document.querySelector('#ShoppingCartContainer')
-
+const productDetailContainer = document.querySelector('#ProductDetail');
+const cardsContainer = document.querySelector('.cards-container');
 
 menuEmail.addEventListener('click', ()=>{
     const isAsideClosed = shopingCartDrop.classList.contains('inactive')
@@ -15,6 +17,19 @@ menuEmail.addEventListener('click', ()=>{
     desktopMenu.classList.toggle('inactive')
 
 })
+function openProductDetailAside(){
+    shopingCartDrop.classList.add('inactive')
+    productDetailContainer.classList.remove('inactive')
+}
+function closeProductDetailAside(){
+        productDetailContainer.classList.add('inactive')
+}
+
+productDetailClose.addEventListener('click', closeProductDetailAside)
+
+
+
+
 
 
 burguerIcon.addEventListener('click', ()=>{
@@ -23,7 +38,7 @@ burguerIcon.addEventListener('click', ()=>{
     if(!isAsideClosed){
         shopingCartDrop.classList.add('inactive')
     }
-
+    closeProductDetailAside();
     mobileMenu.classList.toggle('inactive')
 })
 
@@ -33,6 +48,12 @@ cartIcon.addEventListener('click', ()=>{
 
     if(!isMobileMenuClosed){
         mobileMenu.classList.add('inactive')
+    }
+
+    const isProductDetailClose = productDetailContainer.classList.contains('inactive')
+
+    if(!isProductDetailClose){
+        productDetailContainer.classList.add('inactive')
     }
 
     shopingCartDrop.classList.toggle('inactive')
@@ -85,20 +106,43 @@ productsList.push ({
     image: 'https://m.media-amazon.com/images/I/81k2Gmal+VL._AC_SL1500_.jpg'
 });
 
+function renderProducts(arr) {
+for (product of arr) {
+    const productCard = document.createElement('div');
+    productCard.classList.add('product-card');
 
-for (product of productsList){
- const htmlCards = `<div class="product-card">
- <img src="${product.image}" alt="" alt="">
- <div class="product-info">
-     <div>
-     <p>$${product.price}</p>
-     <p>${product.name}</p>
-     </div>
-     <figure>
-         <img src="./icons/bt_add_to_cart.svg" alt="">
-     </figure>
- </div>
-</div>`
-const cardsContainer = document.querySelector('.cards-container')
-cardsContainer.innerHTML += htmlCards
+    // product= {name, price, image} -> product.image
+    const productImg = document.createElement('img');
+    productImg.setAttribute('src', product.image);
+    productImg.addEventListener('click', openProductDetailAside);
+
+    const productInfo = document.createElement('div');
+    productInfo.classList.add('product-info');
+
+    const productInfoDiv = document.createElement('div');
+
+    const productPrice = document.createElement('p');
+    productPrice.innerText = '$' + product.price;
+    const productName = document.createElement('p');
+    productName.innerText = product.name;
+
+    productInfoDiv.appendChild(productPrice);
+    productInfoDiv.appendChild(productName);
+
+    const productInfoFigure = document.createElement('figure');
+    const productImgCart = document.createElement('img');
+    productImgCart.setAttribute('src', './icons/bt_add_to_cart.svg');
+
+    productInfoFigure.appendChild(productImgCart);
+
+    productInfo.appendChild(productInfoDiv);
+    productInfo.appendChild(productInfoFigure);
+
+    productCard.appendChild(productImg);
+    productCard.appendChild(productInfo);
+
+    cardsContainer.appendChild(productCard);
 }
+}
+
+renderProducts(productsList);
